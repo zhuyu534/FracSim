@@ -57,7 +57,7 @@ class FileWriter:
         """
         with open(self.output_path, 'w') as f:
             # 写入表头
-            header = f"{'Genome 1':<20} {'Genome 2':<20} {'Jaccard':<10} {'Shared':<8} {'Total1':<8} {'Total2':<8}"
+            header = f"{'Genome 1':<20} {'Genome 2':<20} {'Jaccard':<10} {'SharedHashes':<8} {'Hashes1':<8} {'Hashes2':<8}"
             if results[0].ani is not None:
                 header += f" {'ANI':<10}"
             f.write(header + "\n")
