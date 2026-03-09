@@ -1,8 +1,8 @@
 """主程序入口"""
 
+import time
 import sys
-import os
-from typing import List, Dict, Optional
+from typing import List, Dict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from .version import __version__
@@ -45,6 +45,10 @@ class GenomeSimilarity:
     def run(self):
         """运行主流程"""
         self.console.print_info(f"基因组相似度估计软件 v{__version__}")
+
+        # 始终初始化计时器
+        timers = {}
+        start_total = time.perf_counter()
         
         # 1. 获取文件列表
         file_list = self.file_reader.get_file_list(
@@ -53,20 +57,36 @@ class GenomeSimilarity:
         self.console.print_info(f"处理 {len(file_list)} 个文件")
         
         # 2. 读取基因组数据
+        t0 = time.perf_counter()
         self._load_genomes(file_list)
+        timers['读取文件'] = time.perf_counter() - t0
         
         # 3. 生成素描
+        t0 = time.perf_counter()
         self._generate_sketches()
+        timers['生成素描'] = time.perf_counter() - t0
         
         # 4. 计算相似度
+        t0 = time.perf_counter()
         self._calculate_similarities()
+        timers['计算相似度'] = time.perf_counter() - t0
         
         # 5. 输出结果
+        t0 = time.perf_counter()
         self._output_results()
+        timers['输出结果'] = time.perf_counter() - t0
+
+        timers['总耗时'] = time.perf_counter() - start_total
+
+        # 仅在 verbose 模式下输出性能统计
+        if self.args.verbose:
+            self.console.print_info("\n性能统计:")
+            for name, t in timers.items():
+                self.console.print_info(f"  {name}: {t:.3f} 秒")
     
     def _load_genomes(self, file_list: List[str]):
         """
-        加载基因组数据
+        加载基因组数据（每个文件作为一个整体）
         
         Args:
             file_list: 文件列表
@@ -75,39 +95,35 @@ class GenomeSimilarity:
         
         for file_path in file_list:
             try:
-                for seq_id, sequence, quality in self.file_reader.read_sequences(file_path):
-                    genome = GenomeData(
-                        file_path=file_path,
-                        seq_id=seq_id,
-                        sequence=sequence,
-                        quality=quality
-                    )
-                    self.genome_data[seq_id] = genome
-                    
-                    self.console.print_info(
-                        f"加载: {seq_id} | 长度: {genome.length} bp | GC: {genome.gc_content:.1f}%"
-                    )
+                # 使用 read_genome 读取整个文件
+                genome = self.file_reader.read_genome(file_path)
+                self.genome_data[genome.seq_id] = genome
+                
+                self.console.print_info(
+                    f"加载: {genome.seq_id} | 序列数: {len(genome.sequences)} | "
+                    f"总长度: {genome.length} bp | GC: {genome.gc_content:.2f}%"
+                )
             except Exception as e:
                 self.console.print_error(f"加载失败 {file_path}: {e}")
         
-        self.console.print_info(f"成功加载 {len(self.genome_data)} 条序列")
+        self.console.print_info(f"成功加载 {len(self.genome_data)} 个基因组")
     
     def _generate_sketches(self):
         """生成素描"""
         self.console.print_info("生成FracMinHash素描...")
         
         total = len(self.genome_data)
-        for i, (seq_id, genome) in enumerate(self.genome_data.items(), 1):
-            self.console.print_progress(i, total, f"处理 {seq_id}")
-            
+        for i, (seq_id, genome) in enumerate(self.genome_data.items(), 1):           
             try:
                 sketch = self.sketch_gen.create_sketch(genome)
                 self.sketches[seq_id] = sketch
                 
+                sys.stderr.write("\n") 
                 self.console.print_info(
                     f"素描: {seq_id} | k={sketch.kmer_size} | "
                     f"总k-mer: {sketch.total_kmers} | 采样: {sketch.sketch_size}"
                 )
+                self.console.print_progress(i, total, f"处理 {seq_id}")
             except Exception as e:
                 self.console.print_error(f"生成素描失败 {seq_id}: {e}")
     
@@ -186,6 +202,7 @@ class GenomeSimilarity:
         
         # 输出到控制台
         self.console.print_results(self.results, self.args.format)
+        print()
         
         # 输出到文件
         if self.args.output:
@@ -194,6 +211,7 @@ class GenomeSimilarity:
         
         # 输出摘要
         if self.args.verbose:
+            print()
             summary = OutputFormatter.format_summary(self.results)
             self.console.print_info(f"摘要: {summary}")
 

@@ -1,6 +1,6 @@
 """Jaccard计算模块"""
 
-from typing import Set, Tuple
+
 from .models import SketchData, SimilarityResult
 
 
@@ -41,47 +41,10 @@ class JaccardCalculator:
             jaccard_index=jaccard,
             shared_hashes=intersection_size,
             total_hashes1=sketch1.sketch_size,
-            total_hashes2=sketch2.sketch_size
+            total_hashes2=sketch2.sketch_size,
+            total_kmers1=sketch1.total_kmers,
+            total_kmers2=sketch2.total_kmers
         )
         
         return result
     
-    @staticmethod
-    def calculate_containment(sketch1: SketchData, sketch2: SketchData) -> float:
-        """
-        计算包含度：sketch1在sketch2中的比例
-        
-        C(A,B) = |A∩B| / |A|
-        
-        Args:
-            sketch1: 被查询的素描
-            sketch2: 参考素描
-            
-        Returns:
-            float: 包含度
-        """
-        if sketch1.sketch_size == 0:
-            return 0.0
-        
-        intersection = sketch1.hashes.intersection(sketch2.hashes)
-        return len(intersection) / sketch1.sketch_size
-    
-    @staticmethod
-    def calculate_mash_distance(jaccard: float, k: int) -> float:
-        """
-        计算Mash距离
-        
-        D = - (1/k) * ln(2*J/(1+J))
-        
-        Args:
-            jaccard: Jaccard指数
-            k: k-mer长度
-            
-        Returns:
-            float: Mash距离
-        """
-        if jaccard <= 0 or jaccard >= 1:
-            return float('inf')
-        
-        import math
-        return -(1.0 / k) * math.log(2 * jaccard / (1 + jaccard))

@@ -23,8 +23,6 @@ class ANICalculator:
         
         基于Mash论文中的公式：
         ANI ≈ 1 - (1/k) * ln(2J/(1+J))
-        或更精确的：ANI ≈ 1 - (d / k)
-        其中 d 是Mash距离
         
         Args:
             similarity: 相似度结果
@@ -61,36 +59,6 @@ class ANICalculator:
         except (ValueError, ZeroDivisionError):
             return None
     
-    def calculate_ani_containment(self, similarity: SimilarityResult, k: int) -> Optional[float]:
-        """
-        使用包含度方法计算ANI（适用于查询基因组在参考基因组中的情况）
-        
-        Args:
-            similarity: 相似度结果
-            k: k-mer长度
-            
-        Returns:
-            Optional[float]: ANI值
-        """
-        containment = similarity.shared_hashes / similarity.total_hashes1
-        
-        if containment <= 0:
-            return 0.0
-        
-        if containment >= 1:
-            return 1.0
-        
-        try:
-            # 使用包含度估算ANI
-            ani = 1.0 - (1.0 / k) * math.log(containment)
-            
-            # 限制在[0,1]范围内
-            ani = max(0.0, min(1.0, ani))
-            
-            return ani
-            
-        except (ValueError, ZeroDivisionError):
-            return None
     
     def _apply_size_correction(self, ani: float, similarity: SimilarityResult) -> float:
         """
@@ -104,7 +72,7 @@ class ANICalculator:
             float: 校正后的ANI值
         """
         # 如果两个基因组大小差异过大，进行校正
-        size_ratio = similarity.total_hashes1 / similarity.total_hashes2
+        size_ratio = similarity.total_kmers1 / similarity.total_kmers2
         size_ratio = min(size_ratio, 1.0 / size_ratio)  # 确保 ≤ 1
         
         if size_ratio < 0.5:  # 大小差异超过2倍

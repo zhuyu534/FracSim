@@ -29,9 +29,9 @@ class HashFunction:
         """
         return mmh3.hash64(kmer, self.seed)[0]
     
-    def md5_hash(self, kmer: str) -> int:
+    def md5_hash(self, kmer: str) -> int:  # 备用函数
         """
-        使用MD5计算k-mer的哈希值（备用）
+        使用MD5计算k-mer的哈希值
         
         Args:
             kmer: k-mer字符串

@@ -1,61 +1,82 @@
 """命令行参数解析模块"""
 
 import argparse  #命令行解析工具
-import sys
 from ..version import __version__, __description__
 
 
 def parse_arguments():
     """
     解析命令行参数
-    
+
     Returns:
         argparse.Namespace: 解析后的参数对象
     """
     parser = argparse.ArgumentParser(
         description=__description__,
-        formatter_class=argparse.RawDescriptionHelpFormatter,
+        formatter_class=argparse.RawDescriptionHelpFormatter,  #控制帮助信息的格式
         epilog="""
-示例:
+Example:
   %(prog)s -i genome1.fasta genome2.fasta -k 31 -s 0.01
   %(prog)s -l genomes.txt -k 21 -s 0.001 -o results.csv
   %(prog)s -i genome1.fastq genome2.fastq --threads 4 --ani
         """
     )
     
-    # 输入方式选择组
-    input_group = parser.add_mutually_exclusive_group(required=True)
+    # 数据输入方式参数
+    input_group = parser.add_mutually_exclusive_group(required=True)  #创建互斥参数组，必须从该组中选择一个参数使用
     input_group.add_argument(
         '-i', '--input',
-        nargs='+',
-        help='输入比对的基因组文件，至少两个（空格分隔）'
+        nargs='+',  #可接收多个值
+        help='从基因组文件输入，多个文件之间使用空格分隔'
     )
     input_group.add_argument(
         '-l', '--list',
-        help='包含基因组文件路径的列表文件（每行一个文件路径）'
+        help='从包含基因组文件路径的列表文件输入（每行一个文件路径）'
     )
     
-    # 核心算法参数
+
+    # 核心算法参数（K值、采样率、随机数种子）
     parser.add_argument(
         '-k', '--kmer-size',
         type=int,
-        default=31,
-        help='k-mer长度，取值范围[1-64]，默认31'
+        default=21,
+        help='k-mer长度，取值范围[1-64]，默认值21'
     )
     parser.add_argument(
         '-s', '--scaled',
         type=float,
         default=0.01,
-        help='FracMinHash采样率，取值范围(0,1]，默认0.01'
+        help='FracMinHash采样率，取值范围(0,1]，默认值0.01'
     )
     parser.add_argument(
         '--seed',
         type=int,
         default=42,
-        help='哈希函数随机种子，默认42'
+        help='哈希函数随机种子，默认值42'
     )
     
-    # 输出选项
+
+# 计算选项
+    parser.add_argument(
+        '-a','--ani',
+        action='store_true',
+        help='计算ANI值（默认只计算Jaccard指数）'
+    )
+    parser.add_argument(
+        '-t','--threads',
+        type=int,
+        default=1,
+        help='计算线程数，默认值1'
+    )
+    parser.add_argument(
+        '-m','--min-similarity',
+        type=float,
+        default=0.00,
+        help='最小相似度阈值，只输出大于该值的结果，默认0.0'
+    )
+
+
+    # 输出选项参数
     parser.add_argument(
         '-o', '--output',
         help='输出文件路径（默认输出到控制台）'
@@ -64,29 +85,11 @@ def parse_arguments():
         '--format',
         choices=['table', 'json', 'csv'],
         default='table',
-        help='输出格式，默认table'
+        help='结果输出格式，默认表格格式'
     )
     
-    # 计算选项
-    parser.add_argument(
-        '--ani',
-        action='store_true',
-        help='计算ANI值（默认只计算Jaccard指数）'
-    )
-    parser.add_argument(
-        '-t','--threads',
-        type=int,
-        default=1,
-        help='并行计算线程数，默认单线程'
-    )
-    parser.add_argument(
-        '-m','--min-similarity',
-        type=float,
-        default=0.01,
-        help='最小相似度阈值，只输出大于该值的结果，默认0.01'
-    )
     
-    # 其他选项
+    # 版本信息，输出过程信息
     parser.add_argument(
         '-v','--version',
         action='version',

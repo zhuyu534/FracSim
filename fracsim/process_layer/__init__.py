@@ -1,7 +1,6 @@
 """处理层模块"""
 
-from .kmer import KmerGenerator
-from .sketch import FracMinHashSketch
+from .kmer_sketch import KmerGenerator, FracMinHashSketch
 from .jaccard import JaccardCalculator
 from .ani import ANICalculator
 from .models import GenomeData, SketchData, SimilarityResult

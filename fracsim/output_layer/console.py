@@ -1,8 +1,9 @@
 """控制台输出模块"""
 
 import sys
-from typing import List, Dict, Any
+from typing import List
 from ..process_layer.models import SimilarityResult
+from .formatter import format_table, format_csv, format_json
 
 
 class ConsoleOutput:
@@ -58,68 +59,15 @@ class ConsoleOutput:
             return
         
         if format == 'table':
-            self._print_table(results)
+            print(format_table(results))
         elif format == 'csv':
-            self._print_csv(results)
+            print(format_csv(results))
         elif format == 'json':
-            self._print_json(results)
-    
-    def _print_table(self, results: List[SimilarityResult]):
-        """
-        打印表格格式
-        
-        Args:
-            results: 相似度结果列表
-        """
-        # 打印表头
-        header = f"{'Genome 1':<20} {'Genome 2':<20} {'Jaccard':<10} {'SharedHashes':<8} {'Hashes1':<8} {'Hashes2':<8}"
-        if results[0].ani is not None:
-            header += f" {'ANI':<10}"
-        print(header)
-        print("-" * len(header))
-        
-        # 打印数据行
-        for r in results:
-            line = f"{r.genome1_id[:20]:<20} {r.genome2_id[:20]:<20} {r.jaccard_index:<10.6f} {r.shared_hashes:<8} {r.total_hashes1:<8} {r.total_hashes2:<8}"
-            if r.ani is not None:
-                line += f" {r.ani:<10.6f}"
-            print(line)
-    
-    def _print_csv(self, results: List[SimilarityResult]):
-        """
-        打印CSV格式
-        
-        Args:
-            results: 相似度结果列表
-        """
-        # 打印表头
-        header = "genome1,genome2,jaccard_index,shared_hashes,total_hashes1,total_hashes2"
-        if results[0].ani is not None:
-            header += ",ani"
-        print(header)
-        
-        # 打印数据行
-        for r in results:
-            line = f"{r.genome1_id},{r.genome2_id},{r.jaccard_index:.6f},{r.shared_hashes},{r.total_hashes1},{r.total_hashes2}"
-            if r.ani is not None:
-                line += f",{r.ani:.6f}"
-            print(line)
-    
-    def _print_json(self, results: List[SimilarityResult]):
-        """
-        打印JSON格式
-        
-        Args:
-            results: 相似度结果列表
-        """
-        import json
-        
-        output = {
-            "results": [r.to_dict() for r in results],
-            "count": len(results)
-        }
-        
-        print(json.dumps(output, indent=2))
+            print(format_json(results))
+        else:
+            self.print_warning(f"未知格式: {format}，使用默认表格格式")
+            print(format_table(results))
+
     
     def print_progress(self, current: int, total: int, message: str = ""):
         """

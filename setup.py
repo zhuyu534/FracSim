@@ -10,7 +10,7 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 
 setup(
     name="FracSim",
-    version="0.1.0",
+    version="1.0.1",
     author="ZhuYu",
     author_email="1822852048@qq.com",
     description="基于FracMinHash基因组素描算法的细菌基因组相似度估计工具",
