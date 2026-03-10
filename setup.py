@@ -10,10 +10,10 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 
 setup(
     name="FracSim",
-    version="1.0.1",
-    author="ZhuYu",
-    author_email="1822852048@qq.com",
-    description="基于FracMinHash基因组素描算法的细菌基因组相似度估计工具",
+    version="1.0.0",
+    author="YuZhu",
+    author_email="zhuyu1068@gmail.com",
+    description="a FracMinHash-based genome similarity estimator for bacteria",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/zhuyu534/FracSim.git",
@@ -29,7 +29,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.8",   # Python3.8引入新的语法海象运算符；与mmh3>=4.0.0兼容良好，可以保证数据类使用的稳定性；Python3.8是一个广泛使用的版本。
     install_requires=requirements,
     entry_points={
         "console_scripts": [

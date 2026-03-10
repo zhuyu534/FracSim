@@ -12,13 +12,14 @@ def parse_arguments():
         argparse.Namespace: 解析后的参数对象
     """
     parser = argparse.ArgumentParser(
+        usage="%(prog)s [-h] (-i INPUT [INPUT ...] | -l LIST) [options]",
         description=__description__,
         formatter_class=argparse.RawDescriptionHelpFormatter,  #控制帮助信息的格式
         epilog="""
-Example:
-  %(prog)s -i genome1.fasta genome2.fasta -k 31 -s 0.01
-  %(prog)s -l genomes.txt -k 21 -s 0.001 -o results.csv
-  %(prog)s -i genome1.fastq genome2.fastq --threads 4 --ani
+Examples:
+  %(prog)s -i genome1.fasta genome2.fasta -k 21 -s 0.01 
+  %(prog)s -l genomes.txt -k 21 -s 0.001 -o output_dir/results.csv
+  %(prog)s -i genome1.fastq.gz genome2.fastq.gz --threads 4 --ani -V
         """
     )
     
@@ -60,7 +61,7 @@ Example:
     parser.add_argument(
         '-a','--ani',
         action='store_true',
-        help='计算ANI值（默认只计算Jaccard指数）'
+        help='计算输出ANI值（默认只计算Jaccard指数）'
     )
     parser.add_argument(
         '-t','--threads',
@@ -79,10 +80,10 @@ Example:
     # 输出选项参数
     parser.add_argument(
         '-o', '--output',
-        help='输出文件路径（默认输出到控制台）'
+        help='输出文件路径'
     )
     parser.add_argument(
-        '--format',
+        '-f','--format',
         choices=['table', 'json', 'csv'],
         default='table',
         help='结果输出格式，默认表格格式'

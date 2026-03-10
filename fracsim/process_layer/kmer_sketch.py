@@ -82,7 +82,7 @@ class KmerGenerator:
 
         if self.threads > 1 and len(sequence) > 100000:  # 避免小序列的并行开销
             # 并行处理长序列
-            hashes = self._parallel_kmer_hash(sequence, canonical)
+            hashes = self._parallel_kmer_hash(sequence, max_hash, canonical)
         else:
             # 串行处理
             for kmer in self.generate_kmers(sequence, canonical):
@@ -92,7 +92,7 @@ class KmerGenerator:
         
         return hashes
     
-    def _parallel_kmer_hash(self, sequence: str,  canonical: bool) -> Set[int]:
+    def _parallel_kmer_hash(self, sequence: str, max_hash: int, canonical: bool) -> Set[int]:
         """
         并行计算k-mer哈希
         
@@ -118,6 +118,7 @@ class KmerGenerator:
                     future = executor.submit(
                         self._process_chunk,
                         sequence[start:end],
+                        max_hash,
                         start,
                         canonical
                     )

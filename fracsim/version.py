@@ -1,6 +1,12 @@
 """版本信息模块"""
 
-__version__ = "1.0.1"
-__author__ = "ZhuYu"
-__email__ = "1822852048@qq.com"
-__description__ = "基于FracMinHash基因组素描算法的细菌基因组相似度估计工具"
+__version__ = "1.0.0"
+__author__ = "YuZhu"
+__email__ = "zhuyu1068@gmail.com"
+__prog__ = "FracSim"
+__description__ = f"""{__prog__} -- a FracMinHash-based genome similarity estimator for bacteria
+
+Version: {__version__}
+Author: {__author__} <{__email__}>
+Project: https://github.com/zhuyu534/FracSim
+"""
