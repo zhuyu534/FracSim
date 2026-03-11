@@ -44,7 +44,7 @@ class GenomeSimilarity:
     
     def run(self):
         """运行主流程"""
-        self.console.print_info(f"基因组相似度估计软件 v{__version__}")
+        self.console.print_info(f"FracSim v{__version__}")
 
         # 始终初始化计时器
         timers = {}

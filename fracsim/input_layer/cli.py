@@ -40,8 +40,8 @@ Examples:
     parser.add_argument(
         '-k', '--kmer-size',
         type=int,
-        default=21,
-        help='k-mer长度，取值范围[1-64]，默认值21'
+        default=31,
+        help='k-mer长度，取值范围[1-64]，默认值31'
     )
     parser.add_argument(
         '-s', '--scaled',
