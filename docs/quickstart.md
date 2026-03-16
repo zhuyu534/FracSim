@@ -1,0 +1,19 @@
+```markdown
+# Quick Start
+
+This guide walks you through the simplest use case: comparing two bacterial genomes.
+
+## 1. Prepare Input Files
+
+Create two FASTA files (or use your own). For example:
+
+```bash
+cat > ecoli_k12.fasta << 'EOF'
+>Escherichia_coli_K12_MG1655
+AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAG...
+EOF
+
+cat > ecoli_o157.fasta << 'EOF'
+>Escherichia_coli_O157_H7
+AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAG...
+EOF
