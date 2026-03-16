@@ -1,33 +1,33 @@
-# 🧬 FracSim
+## <img src="images/logo.png" width="40" height="40" style="border-radius: 50%; vertical-align: text-bottom; margin-right: 8px;"> FracSim:fast bacterial genome similarity estimation using FracMinHash sketching
 
-基于FracMinHash基因组素描算法的细菌基因组相似度估计工具
-
+[![Latest Version](https://img.shields.io/github/v/release/zhuyu534/FracSim?color=red)](https://github.com/zhuyu534/FracSim/releases)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Platform](https://img.shields.io/badge/platform-linux%20%7C%20macos%20%7C%20windows-lightgrey?color=orange)](https://github.com/zhuyu534/FracSim)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 </div>
 
-## 📖 简介
+FracSim is a **fast** and **accurate** tool for estimating **bacterial** genome similarity, based on the **FracMinHash** genome sketching algorithm. It compresses large genomes into compact hash sets to rapidly compute **Jaccard similarity** and **ANI (Average Nucleotide Identity)** between genomes.
 
-**FracSim** 是一个高效、准确的细菌基因组相似度估计工具，基于 **FracMinHash** 基因组素描算法。它可以将大型基因组压缩为小型哈希集合，从而快速计算基因组间的 Jaccard 相似度和 ANI（平均核苷酸一致性）值。
+Whether for **species identification**, **strain typing**, or **large-scale genome comparison**, FracSim significantly reduces memory usage and computation time while maintaining high accuracy.
 
-无论是进行**物种鉴定**、**菌株分型**还是**大规模基因组比较**，FracSim 都能在保持高准确性的同时，显著降低内存占用和计算时间。
+Documents: https://zhuyu534.github.io/FracSim
 
-## ✨功能特点
+## ✨ Features
 
-- **高效**: 使用FracMinHash素描算法，大幅降低内存占用和计算时间
-- **准确**: 提供Jaccard指数和ANI（平均核苷酸一致性）估计
-- **灵活**: 支持FASTA/Q格式，可配置k-mer长度和采样率
-- **易用**: 简洁的命令行界面，支持多线程并行计算
-- **开源**: MIT协议，欢迎贡献和使用
+- **Fast**: Uses FracMinHash sketching to dramatically lower memory footprint and runtime.
+- **Accurate**: Provides Jaccard index and ANI (Average Nucleotide Identity) estimates.
+- **Flexible**: Supports FASTA/Q formats, configurable k‑mer size and sampling rate.
+- **Easy to use**: Clean command‑line interface with multi‑threading support.
+- **Open source**: MIT licensed – contributions and usage are welcome.
 
-## 📦安装
+## 📦 Installation
 
-### 环境要求
-- Python 3.8 或更高版本
-- pip 包管理工具
+### Requirements
+- Python 3.8 or higher
+- pip package manager
 
-### 从源码安装（推荐）
+### Install from source 
 
 ```bash
 git clone https://github.com/zhuyu534/FracSim.git
