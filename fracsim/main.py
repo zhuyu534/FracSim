@@ -118,7 +118,8 @@ class GenomeSimilarity:
                 sketch = self.sketch_gen.create_sketch(genome)
                 self.sketches[seq_id] = sketch
                 
-                sys.stderr.write("\n") 
+                if self.args.verbose:
+                    sys.stderr.write("\n") 
                 self.console.print_info(
                     f"素描: {seq_id} | k={sketch.kmer_size} | "
                     f"总k-mer: {sketch.total_kmers} | 采样: {sketch.sketch_size}"
@@ -191,6 +192,35 @@ class GenomeSimilarity:
         
         return result
     
+
+    def _print_summary_table(self, summary):
+        """以表格形式打印摘要（保留6位小数）"""
+        lines = []
+        lines.append("统计摘要:")
+        lines.append("")
+    
+        # 表头
+        header = f"{'Metric':<12} {'Jaccard':<12} {'ANI':<12}"
+        lines.append(header)
+        lines.append("-" * len(header))
+    
+        # 数据行
+        metrics = ['min', 'max', 'mean', 'median']
+        for m in metrics:
+            j_val = summary['jaccard'][m]
+            j_str = f"{j_val:.6f}"
+            if 'ani' in summary:
+                ani_val = summary['ani'][m]
+                ani_str = f"{ani_val:.6f}"
+            else:
+                ani_str = "N/A"
+            lines.append(f"{m.capitalize():<12} {j_str:<12} {ani_str:<12}")
+    
+        # 输出每一行
+        for line in lines:
+            self.console.print_info(line)
+
+    
     def _output_results(self):
         """输出结果"""
         if not self.results:
@@ -201,6 +231,7 @@ class GenomeSimilarity:
         self.results.sort(key=lambda x: x.jaccard_index, reverse=True)
         
         # 输出到控制台
+        print()
         self.console.print_results(self.results, self.args.format)
         print()
         
@@ -211,9 +242,8 @@ class GenomeSimilarity:
         
         # 输出摘要
         if self.args.verbose:
-            print()
             summary = OutputFormatter.format_summary(self.results)
-            self.console.print_info(f"摘要: {summary}")
+            self._print_summary_table(summary)
 
 
 def main():

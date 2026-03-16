@@ -24,6 +24,16 @@ class KmerGenerator:
         self.k = k
         self.threads = threads
         self.hash_func = HashFunction(seed)
+        # 创建线程池（仅在多线程时）
+        if threads > 1:
+            self.executor = ThreadPoolExecutor(max_workers=threads)
+        else:
+            self.executor = None
+        
+    def __del__(self):
+        # 尝试关闭线程池（非阻塞）
+        if hasattr(self, 'executor') and self.executor:
+            self.executor.shutdown(wait=False)
     
     def generate_kmers(self, sequence: str, canonical: bool = True) -> Generator[str, None, None]:
         """
@@ -80,7 +90,7 @@ class KmerGenerator:
         """
         hashes = set()
 
-        if self.threads > 1 and len(sequence) > 100000:  # 避免小序列的并行开销
+        if self.threads > 1 and len(sequence) > 100000 and self.executor is not None:  # 避免小序列的并行开销
             # 并行处理长序列
             hashes = self._parallel_kmer_hash(sequence, max_hash, canonical)
         else:
@@ -92,9 +102,10 @@ class KmerGenerator:
         
         return hashes
     
+    
     def _parallel_kmer_hash(self, sequence: str, max_hash: int, canonical: bool) -> Set[int]:
         """
-        并行计算k-mer哈希
+        并行计算k-mer哈希，使用实例线程池
         
         Args:
             sequence: 序列字符串
@@ -107,28 +118,27 @@ class KmerGenerator:
         seq_len = len(sequence)
         chunk_size = seq_len // self.threads
         
-        with ThreadPoolExecutor(max_workers=self.threads) as executor:
-            futures = []
-            
-            for i in range(self.threads):
-                start = i * chunk_size
-                end = start + chunk_size + self.k if i < self.threads - 1 else seq_len
-                
-                if start < seq_len - self.k + 1:
-                    future = executor.submit(
-                        self._process_chunk,
-                        sequence[start:end],
-                        max_hash,
-                        start,
-                        canonical
-                    )
-                    futures.append(future)
-            
-            for future in as_completed(futures):
-                hashes.update(future.result())
-        
+        futures = []
+        for i in range(self.threads):
+            start = i * chunk_size
+            # 最后一个块直接到末尾，其他块扩展k-1保证边界k-mer完整
+            end = start + chunk_size + self.k if i < self.threads - 1 else seq_len
+            if start < seq_len - self.k + 1:
+                future = self.executor.submit(
+                    self._process_chunk,
+                    sequence[start:end],
+                    max_hash,
+                    start,
+                    canonical
+                )
+                futures.append(future)
+
+        for future in as_completed(futures):
+            hashes.update(future.result())
+
         return hashes
     
+
     def _process_chunk(self, chunk: str, max_hash: int, offset: int, canonical: bool) -> Set[int]:
         """
         处理序列片段

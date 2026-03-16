@@ -8,54 +8,61 @@ from ..process_layer.models import SimilarityResult
 
 
 # ==================== 输出格式函数 ====================
-def format_table(results: List[SimilarityResult]) -> str:
-    """将结果格式化为表格，基因组ID不显示扩展名"""
-    if not results:
-        return "没有结果"
-    
-    # 生成去掉扩展名的显示ID，并计算最大宽度
-    display_ids = []
-    for r in results:
-        id1_disp = os.path.splitext(r.genome1_id)[0]
-        id2_disp = os.path.splitext(r.genome2_id)[0]
-        display_ids.append((id1_disp, id2_disp))
-    
-    max_genome1_len = max(len(id1) for id1, _ in display_ids)
-    max_genome2_len = max(len(id2) for _, id2 in display_ids)
-    genome1_width = max(max_genome1_len, 8)
-    genome2_width = max(max_genome2_len, 8)
-    
-    hashes_width = 8
-    shared_width = 8
-    jaccard_width = 10
-    ani_width = 10
 
+def strip_extensions(filename: str) -> str:
+    """
+    去除文件名中的常见序列格式扩展名和压缩扩展名，
+    例如 'GCA_123.fna.gz' -> 'GCA_123'
+    """
+    # 常见序列扩展名
+    seq_exts = {'.fasta', '.fa', '.fna', '.ffn', '.frn', '.fastq', '.fq'}
+    # 压缩扩展名
+    compress_exts = {'.gz', '.bz2', '.xz', '.zip'}
+    
+    base = filename
+    # 反复去除已知后缀，直到没有变化
+    while True:
+        name, ext = os.path.splitext(base)
+        if ext in compress_exts or ext in seq_exts:
+            base = name
+        else:
+            break
+    return base
+
+def format_table(results: List[SimilarityResult]) -> str:
+    # 计算显示用的纯名称列表
+    display_ids = [(strip_extensions(r.genome1_id), strip_extensions(r.genome2_id)) for r in results]
+    # 根据这些显示名称计算列宽
+    max_len1 = max(len(id1) for id1, _ in display_ids)
+    max_len2 = max(len(id2) for _, id2 in display_ids)
+    # 设置最小宽度
+    w1 = max(max_len1, 8)
+    w2 = max(max_len2, 8)
+    
     lines = []
-    header = f"{'Genome1':<{genome1_width}} {'Genome2':<{genome2_width}} {'Hashes1':<{hashes_width}} {'Hashes2':<{hashes_width}} {'SharedHashes':<{shared_width}} {'Jaccard':<{jaccard_width}}"
+    header = f"{'Genome1':<{w1}} {'Genome2':<{w2}} {'Hashes1':<8} {'Hashes2':<8} {'SharedHashes':<8} {'Jaccard':<10}"
     if results[0].ani is not None:
-        header += f" {'ANI':<{ani_width}}"
+        header += f" {'ANI':<10}"
     lines.append(header)
     lines.append("-" * len(header))
-
+    
     for r, (id1_disp, id2_disp) in zip(results, display_ids):
-        line = f"{id1_disp:<{genome1_width}} {id2_disp:<{genome2_width}} {r.total_hashes1:<{hashes_width}} {r.total_hashes2:<{hashes_width}} {r.shared_hashes:<{shared_width}} {r.jaccard_index:<{jaccard_width}.6f}"
+        line = f"{id1_disp:<{w1}} {id2_disp:<{w2}} {r.total_hashes1:<8} {r.total_hashes2:<8} {r.shared_hashes:<8} {r.jaccard_index:<10.6f}"
         if r.ani is not None:
-            line += f" {r.ani:<{ani_width}.6f}"
+            line += f" {r.ani:<10.6f}"
         lines.append(line)
     return "\n".join(lines)
 
 
 def format_csv(results: List[SimilarityResult]) -> str:
-    """将结果格式化为CSV，基因组ID不显示扩展名"""
     lines = []
     header = "genome1,genome2,total_hashes1,total_hashes2,shared_hashes,jaccard_index"
     if results[0].ani is not None:
         header += ",ani"
     lines.append(header)
-
     for r in results:
-        id1_disp = os.path.splitext(r.genome1_id)[0]
-        id2_disp = os.path.splitext(r.genome2_id)[0]
+        id1_disp = strip_extensions(r.genome1_id)
+        id2_disp = strip_extensions(r.genome2_id)
         row = f"{id1_disp},{id2_disp},{r.total_hashes1},{r.total_hashes2},{r.shared_hashes},{r.jaccard_index:.6f}"
         if r.ani is not None:
             row += f",{r.ani:.6f}"
