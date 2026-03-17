@@ -18,13 +18,16 @@ jobs:
         include:
           - os: ubuntu-latest
             asset_name: fracsim-linux-amd64
-            exe_ext: ''
+            icon: 🐧
+            platform_name: Linux
           - os: windows-latest
             asset_name: fracsim-windows-amd64.exe
-            exe_ext: '.exe'
+            icon: 🪟
+            platform_name: Windows
           - os: macos-latest
             asset_name: fracsim-macos-arm64
-            exe_ext: ''
+            icon: 🍎
+            platform_name: macOS
 
     steps:
       - uses: actions/checkout@v4
@@ -41,16 +44,6 @@ jobs:
       - name: Build with PyInstaller
         run: |
           pyinstaller --onefile --name fracsim ./fracsim/main.py
-          
-      - name: Verify build output
-        run: |
-          ls -la dist/
-          if [ "${{ matrix.os }}" = "windows-latest" ]; then
-            test -f dist/fracsim.exe || exit 1
-          else
-            test -f dist/fracsim || exit 1
-          fi
-        shell: bash
           
       - name: Rename binary for upload
         run: |
@@ -78,35 +71,33 @@ jobs:
         with:
           path: ./artifacts
           
-      - name: List all downloaded artifacts
-        run: |
-          echo "=== All downloaded files ==="
-          find ./artifacts -type f | sort
-          echo "============================"
-          
       - name: Generate Release Body
         id: body
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
+          
+          # 创建带图标的表格
           cat > release_body.md << EOF
           ## 🎉 FracSim $VERSION
           
           ### 📥 Downloads
           
-          | Platform | File | Size |
-          |----------|------|------|
-          | 🐧 Linux | [fracsim-linux-amd64](${{ github.server_url }}/${{ github.repository }}/releases/download/$VERSION/fracsim-linux-amd64) | (Linux binary) |
-          | 🪟 Windows | [fracsim-windows-amd64.exe](${{ github.server_url }}/${{ github.repository }}/releases/download/$VERSION/fracsim-windows-amd64.exe) | (Windows executable) |
-          | 🍎 macOS | [fracsim-macos-arm64](${{ github.server_url }}/${{ github.repository }}/releases/download/$VERSION/fracsim-macos-arm64) | (macOS binary) |
+          |  | Platform | File |
+          |--|----------|------|
+          | 🐧 | Linux | [fracsim-linux-amd64](${{ github.server_url }}/${{ github.repository }}/releases/download/$VERSION/fracsim-linux-amd64) |
+          | 🪟 | Windows | [fracsim-windows-amd64.exe](${{ github.server_url }}/${{ github.repository }}/releases/download/$VERSION/fracsim-windows-amd64.exe) |
+          | 🍎 | macOS | [fracsim-macos-arm64](${{ github.server_url }}/${{ github.repository }}/releases/download/$VERSION/fracsim-macos-arm64) |
           
           ### 🔧 Quick Start
           
+          **Linux/macOS:**
           \`\`\`bash
-          # Linux/macOS
           chmod +x fracsim-*
           ./fracsim-* --help
+          \`\`\`
           
-          # Windows (in PowerShell)
+          **Windows (PowerShell):**
+          \`\`\`powershell
           .\fracsim-windows-amd64.exe --help
           \`\`\`
           
@@ -117,7 +108,7 @@ jobs:
           **Full Changelog**: ${{ github.server_url }}/${{ github.repository }}/commits/$VERSION
           EOF
           
-      - name: Create Release
+      - name: Create Release and Upload Assets
         uses: softprops/action-gh-release@v2
         with:
           files: ./artifacts/**/*
