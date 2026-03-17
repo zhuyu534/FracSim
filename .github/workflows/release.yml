@@ -18,26 +18,55 @@ jobs:
         include:
           - os: ubuntu-latest
             asset_name: fracsim-linux-amd64
-            icon: 🐧   # Linux 图标
+            exe_ext: ''
           - os: windows-latest
             asset_name: fracsim-windows-amd64.exe
-            icon: 🪟   # Windows 图标
+            exe_ext: '.exe'
           - os: macos-latest
             asset_name: fracsim-macos-arm64
-            icon: 🍎   # macOS 图标
+            exe_ext: ''
 
     steps:
       - uses: actions/checkout@v4
+      
       - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-      - run: pip install pyinstaller mmh3
-      - run: pyinstaller --onefile --name fracsim ./fracsim/main.py
-      - name: Upload artifact (prepare for release)
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller mmh3 numpy
+          
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller --onefile --name fracsim ./fracsim/main.py
+          
+      - name: Verify build output
+        run: |
+          ls -la dist/
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            test -f dist/fracsim.exe || exit 1
+          else
+            test -f dist/fracsim || exit 1
+          fi
+        shell: bash
+          
+      - name: Rename binary for upload
+        run: |
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            mv dist/fracsim.exe dist/${{ matrix.asset_name }}
+          else
+            mv dist/fracsim dist/${{ matrix.asset_name }}
+          fi
+        shell: bash
+          
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.asset_name }}
-          path: ./dist/fracsim${{ matrix.os == 'windows-latest' && '.exe' || '' }}
+          path: dist/${{ matrix.asset_name }}
+          if-no-files-found: error
 
   release:
     name: Create Release
@@ -48,24 +77,51 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: ./artifacts
-
+          
+      - name: List all downloaded artifacts
+        run: |
+          echo "=== All downloaded files ==="
+          find ./artifacts -type f | sort
+          echo "============================"
+          
       - name: Generate Release Body
         id: body
         run: |
+          VERSION=${GITHUB_REF#refs/tags/}
           cat > release_body.md << EOF
-          ## 📥 Downloads
-          | Platform | Download Link |
-          |------|----------|
-          | 🐧 Linux | [fracsim-linux-amd64](./attachments/fracsim-linux-amd64) |
-          | 🪟 Windows | [fracsim-windows-amd64.exe](./attachments/fracsim-windows-amd64.exe) |
-          | 🍎 macOS | [fracsim-macos-arm64](./attachments/fracsim-macos-arm64) |
+          ## 🎉 FracSim $VERSION
+          
+          ### 📥 Downloads
+          
+          | Platform | File | Size |
+          |----------|------|------|
+          | 🐧 Linux | [fracsim-linux-amd64](${{ github.server_url }}/${{ github.repository }}/releases/download/$VERSION/fracsim-linux-amd64) | (Linux binary) |
+          | 🪟 Windows | [fracsim-windows-amd64.exe](${{ github.server_url }}/${{ github.repository }}/releases/download/$VERSION/fracsim-windows-amd64.exe) | (Windows executable) |
+          | 🍎 macOS | [fracsim-macos-arm64](${{ github.server_url }}/${{ github.repository }}/releases/download/$VERSION/fracsim-macos-arm64) | (macOS binary) |
+          
+          ### 🔧 Quick Start
+          
+          \`\`\`bash
+          # Linux/macOS
+          chmod +x fracsim-*
+          ./fracsim-* --help
+          
+          # Windows (in PowerShell)
+          .\fracsim-windows-amd64.exe --help
+          \`\`\`
+          
+          ### 📚 Documentation
+          Full documentation: [GitHub Pages](https://${{ github.repository_owner }}.github.io/$(echo ${{ github.repository }} | cut -d'/' -f2)/)
+          
+          ---
+          **Full Changelog**: ${{ github.server_url }}/${{ github.repository }}/commits/$VERSION
           EOF
-          echo "body<<EOF" >> $GITHUB_OUTPUT
-          cat release_body.md >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-      - name: Create Release and Upload Assets
+          
+      - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           files: ./artifacts/**/*
           body_path: release_body.md
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
