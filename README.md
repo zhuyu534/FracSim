@@ -1,4 +1,4 @@
-## <img src="images/logo.png" width="40" height="40" style="vertical-align: text-bottom; margin-right: 8px;"> FracSim:fast bacterial genome similarity estimation using FracMinHash sketching
+## <img src="https://raw.githubusercontent.com/zhuyu534/FracSim/main/images/logo.png" width="40" height="40" style="vertical-align: text-bottom; margin-right: 8px;"> FracSim:fast bacterial genome similarity estimation using FracMinHash sketching
 
 [![Latest Version](https://img.shields.io/github/v/release/zhuyu534/FracSim?include_prereleases&color=red)](https://github.com/zhuyu534/FracSim/releases)
 [![PyPI version](https://img.shields.io/pypi/v/FracSim?color=0080ff)](https://pypi.org/project/FracSim/)
