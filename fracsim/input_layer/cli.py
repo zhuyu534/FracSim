@@ -67,7 +67,7 @@ Examples:
         '-t','--threads',
         type=int,
         default=1,
-        help='计算线程数，默认值1'
+        help='并行任务数（生成素描阶段使用多进程加速），默认值1'
     )
     parser.add_argument(
         '-m','--min-similarity',

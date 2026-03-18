@@ -1,12 +1,11 @@
 """k-mer计算，FracMinHash素描生成模块"""
 
 
-from typing import Set
+import sys
 from .models import SketchData, GenomeData
 from ..utils.hash import HashFunction
 from typing import Set,  Generator
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from ..utils.hash import HashFunction
+from concurrent.futures import ProcessPoolExecutor, as_completed
 
 
 class KmerGenerator:
@@ -22,18 +21,7 @@ class KmerGenerator:
             threads: 线程数
         """
         self.k = k
-        self.threads = threads
         self.hash_func = HashFunction(seed)
-        # 创建线程池（仅在多线程时）
-        if threads > 1:
-            self.executor = ThreadPoolExecutor(max_workers=threads)
-        else:
-            self.executor = None
-        
-    def __del__(self):
-        # 尝试关闭线程池（非阻塞）
-        if hasattr(self, 'executor') and self.executor:
-            self.executor.shutdown(wait=False)
     
     def generate_kmers(self, sequence: str, canonical: bool = True) -> Generator[str, None, None]:
         """
@@ -90,86 +78,15 @@ class KmerGenerator:
         """
         hashes = set()
 
-        if self.threads > 1 and len(sequence) > 100000 and self.executor is not None:  # 避免小序列的并行开销
-            # 并行处理长序列
-            hashes = self._parallel_kmer_hash(sequence, max_hash, canonical)
-        else:
-            # 串行处理
-            for kmer in self.generate_kmers(sequence, canonical):
-                hash_val = self.hash_func.get_hash(kmer)
-                if hash_val < max_hash:  # 筛选
-                    hashes.add(hash_val)
         
-        return hashes
-    
-    
-    def _parallel_kmer_hash(self, sequence: str, max_hash: int, canonical: bool) -> Set[int]:
-        """
-        并行计算k-mer哈希，使用实例线程池
-        
-        Args:
-            sequence: 序列字符串
-            canonical: 是否使用正则形式
-            
-        Returns:
-            Set[int]: 哈希值集合
-        """
-        hashes = set()
-        seq_len = len(sequence)
-        chunk_size = seq_len // self.threads
-        
-        futures = []
-        for i in range(self.threads):
-            start = i * chunk_size
-            # 最后一个块直接到末尾，其他块扩展k-1保证边界k-mer完整
-            end = start + chunk_size + self.k if i < self.threads - 1 else seq_len
-            if start < seq_len - self.k + 1:
-                future = self.executor.submit(
-                    self._process_chunk,
-                    sequence[start:end],
-                    max_hash,
-                    start,
-                    canonical
-                )
-                futures.append(future)
-
-        for future in as_completed(futures):
-            hashes.update(future.result())
-
-        return hashes
-    
-
-    def _process_chunk(self, chunk: str, max_hash: int, offset: int, canonical: bool) -> Set[int]:
-        """
-        处理序列片段
-        
-        Args:
-            chunk: 序列片段
-            offset: 起始位置偏移
-            canonical: 是否使用正则形式
-            
-        Returns:
-            Set[int]: 哈希值集合
-        """
-        hashes = set() 
-        AMBIGUOUS_BASES = set('RYSWKMBDHVryswkmbdhv')
-
-        for i in range(len(chunk) - self.k + 1):
-            kmer = chunk[i:i + self.k].upper()
-            
-            if 'N' in kmer or any(c in AMBIGUOUS_BASES for c in kmer):
-                continue
-            
-            if canonical:
-                rev_comp = self._reverse_complement(kmer)
-                kmer = min(kmer, rev_comp)
-            
+        # 串行处理
+        for kmer in self.generate_kmers(sequence, canonical):
             hash_val = self.hash_func.get_hash(kmer)
-            if hash_val < max_hash:
+            if hash_val < max_hash:  # 筛选
                 hashes.add(hash_val)
-            
         
         return hashes
+    
     
     def _reverse_complement(self, seq: str) -> str:
         """
@@ -185,12 +102,33 @@ class KmerGenerator:
         return ''.join(complement.get(base, base) for base in reversed(seq))
     
 
+ # 辅助函数：供多进程调用，计算单条序列的哈希集合
+def _process_sequence_for_sketch(sequence: str, k: int, max_hash: int, seed: int, canonical: bool) -> Set[int]:
+    """
+    子进程任务：计算单条序列的FracMinHash哈希集合
+    
+    Args:
+        sequence: 序列字符串
+        k: k-mer长度
+        max_hash: 最大哈希阈值
+        seed: 哈希种子
+        canonical: 是否使用正则形式
+        
+    Returns:
+        Set[int]: 哈希值集合
+    """
+    # 每个子进程独立创建KmerGenerator，避免传递不可序列化对象
+    kg = KmerGenerator(k, seed, threads=1)
+    return kg.get_kmer_hashes(sequence, max_hash, canonical)
+   
+
+
 # ---------------------------------------------------
 #----------------------------------------------------
 #----------------------------------------------------
 
 class FracMinHashSketch:
-    """FracMinHash素描生成器类"""
+    """FracMinHash素描生成器类（支持多进程并行）"""
     
     def __init__(self, k: int, scaled: float, seed: int = 42, threads: int = 1):
         """
@@ -220,20 +158,21 @@ class FracMinHashSketch:
             SketchData: 素描数据
         """
         max_hash = self._calculate_max_hash()
-        all_hashes = set()
+        sequences = genome_data.sequences
+
+        # 计算总k-mer数（串行，仅用长度）
         total_kmers = 0
-
-        # 遍历所有序列，合并哈希集合
-        for sequence in genome_data.sequences:
-            # 获取当前序列的过滤后哈希集合
-            seq_hashes = self.kmer_gen.get_kmer_hashes(sequence, max_hash)
-            all_hashes.update(seq_hashes)  # 合并哈希集合
-            sketch_size = len(all_hashes)
-            
-            # 累加总窗口数
-            total_kmers += len(sequence) - self.k + 1
-
+        for seq in sequences:
+            if len(seq) >= self.k:
+                total_kmers += len(seq) - self.k + 1
         
+        # 判断是否启用多进程
+        if self.threads > 1 and len(sequences) > 1:
+            all_hashes = self._parallel_process(sequences, max_hash)
+        else:
+            all_hashes = self._serial_process(sequences, max_hash)
+            
+ 
         # 创建素描数据
         sketch = SketchData(
             genome_id=genome_data.seq_id,
@@ -242,13 +181,46 @@ class FracMinHashSketch:
             seed=self.seed,
             hashes=all_hashes,
             total_kmers=total_kmers,
-            sketch_size=sketch_size
+            sketch_size=len(all_hashes)
 
         )
         
         return sketch
     
+
+    def _serial_process(self, sequences: list, max_hash: int) -> Set[int]:
+        """串行处理所有序列"""
+        all_hashes = set()
+        for seq in sequences:
+            seq_hashes = self.kmer_gen.get_kmer_hashes(seq, max_hash, canonical=True)
+            all_hashes.update(seq_hashes)
+        return all_hashes
     
+    def _parallel_process(self, sequences: list, max_hash: int) -> Set[int]:
+        """使用进程池并行处理所有序列"""
+        all_hashes = set()
+        with ProcessPoolExecutor(max_workers=self.threads) as executor:
+            futures = []
+            for seq in sequences:
+                # 跳过长度小于k的序列（不会产生k-mer）
+                if len(seq) < self.k:
+                    continue
+                future = executor.submit(
+                    _process_sequence_for_sketch,
+                    seq, self.k, max_hash, self.seed, True
+                )
+                futures.append(future)
+            
+            for future in as_completed(futures):
+                try:
+                    seq_hashes = future.result()
+                    all_hashes.update(seq_hashes)
+                except Exception as e:
+                    # 实际项目中可改用日志模块
+                    print(f"Error in subprocess: {e}", file=sys.stderr)
+        return all_hashes
+
+
     def _calculate_max_hash(self) -> int:
         """
         计算最大哈希阈值
