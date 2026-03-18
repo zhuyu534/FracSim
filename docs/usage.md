@@ -10,7 +10,7 @@
 | `-s, --scaled`         | FracMinHash sampling rate (0–1, default: 0.01).                            |
 | `--seed`               | Random seed for hashing (default: 42).                                     |
 | `-a, --ani`                | Compute ANI in addition to Jaccard index.                                  |
-| `--threads`            | Number of threads for parallel processing (default: 1).                    |
+| `-t, --threads`            | Number of parallel tasks (default: 1).                    |
 | `-f, --format`             | Output format: `table`, `csv`, `json` (default: `table`).                  |
 | `-o, --output`         | Output file path (default: stdout).                                        |
 | `--min-similarity`     | Only output pairs with Jaccard index ≥ this value (default: 0.0).          |
@@ -63,7 +63,7 @@ FracSim supports multiple output formats to suit different needs:
 
 | Option | Description |
 |--------|-------------|
-| `-t, --threads` | Number of threads for parallel k-mer extraction (default: 1). Increase for faster processing of large genomes. |
+| `-t, --threads` | Number of parallel tasks (sketch generation phase is accelerated using multiprocessing), default 1. |
 
 ### Information
 
@@ -106,7 +106,7 @@ fracsim -i genome1.fna genome2.fna -k 31 -s 0.01 --format json -o results.json -
 ```
 
 ### Performance optimization
-##### Use multiple threads for large genomes
+##### Parallel processing of large genomes
 ```bash
 fracsim -i large_genome.fna reference_genome.fna -k 31 -s 0.01 --threads 8
 ```
