@@ -1,6 +1,6 @@
 """版本信息模块"""
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 __author__ = "YuZhu"
 __email__ = "zhuyu1068@gmail.com"
 __prog__ = "FracSim"
