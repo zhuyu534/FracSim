@@ -211,7 +211,7 @@ class GenomeSimilarity:
             j_str = f"{j_val:.6f}"
             if 'ani' in summary:
                 ani_val = summary['ani'][m]
-                ani_str = f"{ani_val:.6f}"
+                ani_str = f"{ani_val:.4f}"
             else:
                 ani_str = "N/A"
             lines.append(f"{m.capitalize():<12} {j_str:<12} {ani_str:<12}")

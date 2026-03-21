@@ -19,7 +19,7 @@ class ANICalculator:
     
     def calculate_ani_from_jaccard(self, similarity: SimilarityResult, k: int) -> Optional[float]:
         """
-        从Jaccard指数估算ANI
+        从Jaccard指数估算ANI,返回百分比值（0-100）
         
         基于Mash论文中的公式：
         ANI ≈ 1 - (1/k) * ln(2J/(1+J))
@@ -38,7 +38,7 @@ class ANICalculator:
             return 0.0
         
         if jaccard >= 1:
-            return 1.0
+            return 100.0
         
         try:
             # 计算Mash距离
@@ -53,7 +53,7 @@ class ANICalculator:
             
             # 限制在[0,1]范围内
             ani = max(0.0, min(1.0, ani))
-            
+            ani = ani * 100.0  # 转换为百分比
             return ani
             
         except (ValueError, ZeroDivisionError):

@@ -59,14 +59,33 @@ class SimilarityResult:
     
     def to_dict(self) -> Dict:
         """转换为字典"""
+
+        # def strip_extensions(filename: str) -> str:
+        #     base = filename
+            
+        #     # 去除压缩扩展名
+        #     compress_exts = ['.gz', '.bz2', '.xz', '.zip']
+        #     for ext in compress_exts:
+        #         if base.endswith(ext):
+        #             base = base[:-len(ext)]
+        #             break
+
+        #     # 去除序列扩展名
+        #     seq_exts = ['.fasta', '.fa', '.fna', '.ffn', '.frn', '.fastq', '.fq']
+        #     for ext in seq_exts:
+        #         if base.endswith(ext):
+        #             base = base[:-len(ext)]
+        #             break
+        #     return base
+
         result = {
             'genome1': self.genome1_id,
             'genome2': self.genome2_id,
             'total_hashes1': self.total_hashes1,
             'total_hashes2': self.total_hashes2,
             'shared_hashes': self.shared_hashes,
-            'jaccard_index': self.jaccard_index
+            'jaccard_index': round(self.jaccard_index, 6),  # 保留6位小数
         }
         if self.ani is not None:
-            result['ani'] = self.ani
+            result['ani'] = round(self.ani, 4)  # 保留4位小数
         return result

@@ -49,7 +49,7 @@ def format_table(results: List[SimilarityResult]) -> str:
     for r, (id1_disp, id2_disp) in zip(results, display_ids):
         line = f"{id1_disp:<{w1}} {id2_disp:<{w2}} {r.total_hashes1:<8} {r.total_hashes2:<8} {r.shared_hashes:<8} {r.jaccard_index:<10.6f}"
         if r.ani is not None:
-            line += f" {r.ani:<10.6f}"
+            line += f" {r.ani:<10.4f}"
         lines.append(line)
     return "\n".join(lines)
 
@@ -65,7 +65,7 @@ def format_csv(results: List[SimilarityResult]) -> str:
         id2_disp = strip_extensions(r.genome2_id)
         row = f"{id1_disp},{id2_disp},{r.total_hashes1},{r.total_hashes2},{r.shared_hashes},{r.jaccard_index:.6f}"
         if r.ani is not None:
-            row += f",{r.ani:.6f}"
+            row += f",{r.ani:.4f}"
         lines.append(row)
     return "\n".join(lines)
 
