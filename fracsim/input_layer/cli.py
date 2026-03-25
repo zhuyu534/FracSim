@@ -28,11 +28,11 @@ Examples:
     input_group.add_argument(
         '-i', '--input',
         nargs='+',  #可接收多个值
-        help='从基因组文件输入，多个文件之间使用空格分隔'
+        help='Input genome file(s) in FASTA/FASTQ format. Multiple files separated by spaces.'
     )
     input_group.add_argument(
         '-l', '--list',
-        help='从包含基因组文件路径的列表文件输入（每行一个文件路径）'
+        help='Input genome file list from a text file (one file path per line).'
     )
     
 
@@ -40,20 +40,20 @@ Examples:
     parser.add_argument(
         '-k', '--kmer-size',
         type=int,
-        default=31,
-        help='k-mer长度，取值范围[1-64]，默认值31'
+        default=21,
+        help='k‑mer length. Must be an integer between 1 and 64. Default: 21.'
     )
     parser.add_argument(
         '-s', '--scaled',
         type=float,
         default=0.01,
-        help='FracMinHash采样率，取值范围(0,1]，默认值0.01'
+        help='FracMinHash sampling rate. A float in the range (0,1]. Default: 0.01.'
     )
     parser.add_argument(
         '--seed',
         type=int,
         default=42,
-        help='哈希函数随机种子，默认值42'
+        help='Random seed for hash function. Default: 42.'
     )
     
 
@@ -61,32 +61,32 @@ Examples:
     parser.add_argument(
         '-a','--ani',
         action='store_true',
-        help='计算输出ANI值（默认只计算Jaccard指数）'
+        help='Compute Average Nucleotide Identity (ANI) in addition to Jaccard index.'
     )
     parser.add_argument(
         '-t','--threads',
         type=int,
         default=1,
-        help='并行任务数（生成素描阶段使用多进程加速），默认值1'
+        help='Number of parallel processes. Default: 1.'
     )
     parser.add_argument(
         '-m','--min-similarity',
         type=float,
         default=0.00,
-        help='最小相似度阈值，只输出大于该值的结果，默认0.0'
+        help='Minimum similarity threshold (Jaccard index, or ANI if --ani is set). Default: 0.0.'
     )
 
 
     # 输出选项参数
     parser.add_argument(
         '-o', '--output',
-        help='输出文件路径'
+        help='Output file path. If not specified, results are printed to stdout.'
     )
     parser.add_argument(
         '-f','--format',
         choices=['table', 'json', 'csv'],
         default='table',
-        help='结果输出格式，默认表格格式'
+        help='Output format. Choices: table, json, csv. Default: table.'
     )
     
     
@@ -94,13 +94,13 @@ Examples:
     parser.add_argument(
         '-v','--version',
         action='version',
-        version=f'%(prog)s {__version__}',
-        help='版本信息'
+        version=f'FracSim {__version__}',
+        help='Display program version and exit.'
     )
     parser.add_argument(
         '-V','--verbose',
         action='store_true',
-        help='输出详细信息'
+        help='Output detailed information'
     )
     
     # 解析参数
@@ -113,7 +113,7 @@ Examples:
     if args.scaled <= 0 or args.scaled > 1:
         parser.error("采样率必须在(0,1]范围内")
     
-    if args.min_similarity < 0 or args.min_similarity > 1:
-        parser.error("最小相似度必须在0-1之间")
+    if args.min_similarity < 0 or args.min_similarity > 100:
+        parser.error("最小相似度必须在0-100之间")
     
     return args

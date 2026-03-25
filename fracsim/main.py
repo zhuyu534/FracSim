@@ -161,8 +161,15 @@ class GenomeSimilarity:
                 
                 try:
                     result = future.result()
-                    if result.jaccard_index >= self.args.min_similarity:
-                        self.results.append(result)
+                    # 根据是否启用 --ani 决定过滤标准
+                    if self.args.ani:
+                        # 使用 ANI 值过滤（若 ANI 计算失败则为 None）
+                        if result.ani is not None and result.ani >= self.args.min_similarity:
+                            self.results.append(result)
+                    else:
+                        # 使用 Jaccard 指数过滤
+                        if result.jaccard_index >= self.args.min_similarity / 100.0:
+                            self.results.append(result)
                 except Exception as e:
                     self.console.print_error(f"计算失败: {e}")
         
