@@ -9,11 +9,11 @@
 | `-k, --kmer-size`      | k-mer length (1–64, default: 31).                                          |
 | `-s, --scaled`         | FracMinHash sampling rate (0–1, default: 0.01).                            |
 | `--seed`               | Random seed for hashing (default: 42).                                     |
-| `-a, --ani`                | Compute ANI in addition to Jaccard index.                                  |
+| `-a, --ani`                | Compute ANI in addition to Jaccard index (Percentage).                                  |
 | `-t, --threads`            | Number of parallel tasks (default: 1).                    |
-| `-f, --format`             | Output format: `table`, `csv`, `json` (default: `table`).                  |
+| `-f, --format`             | Output format: `table`, `csv`, `json`, `tsv` (default: `table`).                  |
 | `-o, --output`         | Output file path (default: stdout).                                        |
-| `--min-similarity`     | Only output pairs with Jaccard index ≥ this value (default: 0.0).          |
+| `-m, --min-similarity`     | Minimum similarity threshold (Jaccard index, or ANI if --ani is set),Only output pairs with similarity ≥ this value (default: 0.0).          |
 | `-V, --verbose`            | Print detailed progress information.                                       |
 | `-v, --version`            | Show program version and exit.                                             |
 | `-h, --help`           | Show this help message and exit.                                           |
@@ -48,9 +48,9 @@
 | Option | Description |
 |--------|-------------|
 | `-a, --ani` | Compute ANI (Average Nucleotide Identity) in addition to Jaccard index. Adds ANI column to output. |
-| `-f, --format` | Output format: `table`, `csv`, `json` (default: `table`). Console always displays formatted results. |
-| `-o, --output` | Output file path. Format is auto-detected from extension (`.csv`, `.json`, `.txt`). |
-| `--min-similarity` | Filter results: only output pairs with Jaccard index ≥ this value (default: 0.0). Useful for focusing on high-similarity genomes. |
+| `-f, --format` | Output format: `table`, `csv`, `json`, `tsv` (default: `table`). Console always displays formatted results. |
+| `-o, --output` | Output file path. Format is auto-detected from extension (`.csv`, `.json`, `.txt`, `.tsv`). |
+| `-m, --min-similarity` | Filter results: only output pairs with similarity ≥ this value (default: 0.0). Useful for focusing on high-similarity genomes. |
 
 #### Output Formats
 FracSim supports multiple output formats to suit different needs:
@@ -58,6 +58,7 @@ FracSim supports multiple output formats to suit different needs:
 - **Table**: Human-readable formatted table  
 - **CSV**: Comma-separated values, ideal for spreadsheet software or further analysis
 - **JSON**: Structured data format, perfect for programmatic processing and integration
+- **TSV**: Tab separated, machine friendly, can be directly imported by tools such as Excel, R, Python (pandas), etc.
 
 ### Performance
 
