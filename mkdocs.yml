@@ -3,6 +3,10 @@ site_name: FracSim
 site_description: Fast bacterial genome similarity estimation using FracMinHash sketching
 site_author: Yu Zhu
 site_url: https://zhuyu534.github.io/FracSim
+theme:
+  name: material
+  logo: images/logo.png   # 导航栏左侧图标
+  favicon: images/logo.png # 浏览器标签页图标
 
 repo_name: zhuyu534/FracSim
 repo_url: https://github.com/zhuyu534/FracSim
