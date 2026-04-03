@@ -17,6 +17,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/zhuyu534/FracSim.git",
+    license="MIT",
     package_dir={"": "fracsim"},
     packages=find_packages(where="fracsim"),
     classifiers=[
@@ -36,4 +37,5 @@ setup(
             "fracsim=fracsim.main:main",
         ],
     },
+    zip_safe=False,
 )
