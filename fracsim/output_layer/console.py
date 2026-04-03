@@ -3,7 +3,7 @@
 import sys
 from typing import List
 from ..process_layer.models import SimilarityResult
-from .formatter import format_table, format_csv, format_json
+from .formatter import format_table, format_csv, format_json, format_tsv
 
 
 class ConsoleOutput:
@@ -64,6 +64,8 @@ class ConsoleOutput:
             print(format_csv(results))
         elif format == 'json':
             print(format_json(results))
+        elif format == 'tsv':
+            print(format_tsv(results))
         else:
             self.print_warning(f"未知格式: {format}，使用默认表格格式")
             print(format_table(results))

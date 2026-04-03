@@ -79,6 +79,29 @@ def format_json(results: List[SimilarityResult]) -> str:
     return json.dumps(output, indent=2)
 
 
+def format_tsv(results: List[SimilarityResult]) -> str:
+    """将结果格式化为 TSV（制表符分隔）字符串"""
+    lines = []
+    # 表头
+    header = ["genome1", "genome2", "total_hashes1", "total_hashes2", "shared_hashes", "jaccard_index"]
+    if results[0].ani is not None:
+        header.append("ani")
+    lines.append("\t".join(header))
+
+    # 数据行
+    for r in results:
+        row = [
+            r.genome1_id,
+            r.genome2_id,
+            str(r.total_hashes1),
+            str(r.total_hashes2),
+            str(r.shared_hashes),
+            f"{r.jaccard_index:.6f}"
+        ]
+        if r.ani is not None:
+            row.append(f"{r.ani:.6f}")
+        lines.append("\t".join(row))
+    return "\n".join(lines)
 
 
 # ==================== 摘要与矩阵生成器类 ====================

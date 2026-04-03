@@ -4,7 +4,7 @@ import os
 from typing import List, Optional
 from ..process_layer.models import SimilarityResult
 from .console import ConsoleOutput
-from .formatter import format_table, format_csv, format_json
+from .formatter import format_table, format_csv, format_json, format_tsv
 
 
 class FileWriter:
@@ -36,6 +36,8 @@ class FileWriter:
                 format = 'json'
             elif ext == '.csv':
                 format = 'csv'
+            elif ext == '.tsv':
+                format = 'tsv'
 
         try:
             # 创建输出目录（如果不存在）
@@ -50,6 +52,8 @@ class FileWriter:
                 content = format_csv(results)
             elif format == 'json':
                 content = format_json(results)
+            elif format == 'tsv':
+                content = format_tsv(results)
             else:
                 self.console.print_warning(f"未知格式: {format}，使用默认表格格式")
                 content = format_table(results)

@@ -84,9 +84,9 @@ Examples:
     )
     parser.add_argument(
         '-f','--format',
-        choices=['table', 'json', 'csv'],
+        choices=['table', 'json', 'csv', 'tsv'],
         default='table',
-        help='Output format. Choices: table, json, csv. Default: table.'
+        help='Output format. Choices: table, json, csv, tsv. Default: table.'
     )
     
     
