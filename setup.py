@@ -18,8 +18,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/zhuyu534/FracSim.git",
     license="MIT",
-    package_dir={"": "fracsim"},
-    packages=find_packages(where="fracsim"),
+    packages=find_packages(exclude=["docs", "images", "site", "test_data", "dist"]),
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Science/Research",
