@@ -1,6 +1,7 @@
 """主程序入口"""
 
 import time
+import tracemalloc
 import sys
 from typing import List, Dict
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -45,7 +46,9 @@ class GenomeSimilarity:
     def run(self):
         """运行主流程"""
         self.console.print_info(f"FracSim v{__version__}")
-
+        peak_mem = None
+        if self.args.performance: 
+            tracemalloc.start() # 开始内存监测
         # 始终初始化计时器
         timers = {}
         start_total = time.perf_counter()
@@ -77,12 +80,21 @@ class GenomeSimilarity:
         timers['输出结果'] = time.perf_counter() - t0
 
         timers['总耗时'] = time.perf_counter() - start_total
+        if self.args.performance:
+            _, peak_mem = tracemalloc.get_traced_memory()
+            tracemalloc.stop()
 
-        # 仅在 verbose 模式下输出性能统计
+        # 在 verbose 模式下输出性能统计
         if self.args.verbose:
             self.console.print_info("\n性能统计:")
             for name, t in timers.items():
                 self.console.print_info(f"  {name}: {t:.3f} 秒")
+            if self.args.performance:
+                self.console.print_info(f"  峰值内存: {peak_mem / 1024 / 1024:.2f} MB")
+        elif self.args.performance: 
+            # 非 verbose 模式，直接输出性能信息（不依赖 console.print_info）
+            sys.stderr.write(f"[PERF] 总耗时: {timers['总耗时']:.3f} 秒\n")
+            sys.stderr.write(f"[PERF] 峰值内存: {peak_mem / 1024 / 1024:.2f} MB\n")
     
     def _load_genomes(self, file_list: List[str]):
         """

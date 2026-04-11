@@ -12,6 +12,7 @@ def parse_arguments():
         argparse.Namespace: 解析后的参数对象
     """
     parser = argparse.ArgumentParser(
+        allow_abbrev=False,
         usage="%(prog)s [-h] (-i INPUT [INPUT ...] | -l LIST) [options]",
         description=__description__,
         formatter_class=argparse.RawDescriptionHelpFormatter,  #控制帮助信息的格式
@@ -40,8 +41,8 @@ Examples:
     parser.add_argument(
         '-k', '--kmer-size',
         type=int,
-        default=21,
-        help='k‑mer length. Must be an integer between 1 and 64. Default: 21.'
+        default=16,
+        help='k‑mer length. Must be an integer between 1 and 64. Default: 16.'
     )
     parser.add_argument(
         '-s', '--scaled',
@@ -89,6 +90,11 @@ Examples:
         help='Output format. Choices: table, json, csv, tsv. Default: table.'
     )
     
+    # 内存监测参数
+    parser.add_argument(
+        '-p','--performance',
+        action='store_true',
+        help='Enable performance monitoring (total time and peak memory) - high self overhead, may slow down computation.')
     
     # 版本信息，输出过程信息
     parser.add_argument(
