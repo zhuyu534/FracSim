@@ -14,6 +14,7 @@
 | `-f, --format`             | Output format: `table`, `csv`, `json`, `tsv` (default: `table`).                  |
 | `-o, --output`         | Output file path (default: stdout).                                        |
 | `-m, --min-similarity`     | Minimum similarity threshold (Jaccard index, or ANI if --ani is set),Only output pairs with similarity ≥ this value (default: 0.0).          |
+| `-p, --performance`    | Enable performance monitoring (total time and peak memory) - high self overhead, may slow down computation.   |
 | `-V, --verbose`            | Print detailed progress information.                                       |
 | `-v, --version`            | Show program version and exit.                                             |
 | `-h, --help`           | Show this help message and exit.                                           |
