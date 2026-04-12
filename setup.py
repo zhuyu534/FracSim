@@ -10,7 +10,7 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 
 setup(
     name="FracSim",
-    version="1.0.1",
+    version="1.0.2",
     author="YuZhu",
     author_email="zhuyu1068@gmail.com",
     description="a FracMinHash-based genome similarity estimator for bacteria",
