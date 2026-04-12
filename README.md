@@ -1,6 +1,7 @@
 ## <img src="https://raw.githubusercontent.com/zhuyu534/FracSim/main/images/logo.png" width="40" height="40" style="vertical-align: text-bottom; margin-right: 8px;"> FracSim:fast bacterial genome similarity estimation using FracMinHash sketching
 
 [![Latest Version](https://img.shields.io/github/v/release/zhuyu534/FracSim?include_prereleases&color=red)](https://github.com/zhuyu534/FracSim/releases)
+[![Bioconda](https://img.shields.io/badge/conda-bioconda-brightgreen.svg)](https://bioconda.github.io/recipes/fracsim/README.html)
 [![PyPI version](https://img.shields.io/pypi/v/FracSim?color=0080ff)](https://pypi.org/project/FracSim/)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Platform](https://img.shields.io/badge/platform-linux%20%7C%20macos%20%7C%20windows-lightgrey?color=orange)](https://github.com/zhuyu534/FracSim)
@@ -27,10 +28,11 @@ Documents: https://zhuyu534.github.io/FracSim
 ### Requirements
 - Python 3.8 or higher
 
-### Method 1: Download binaries
+### Method 1: From Bioconda (recommended)
 
-Check out the [Download Page](https://github.com/zhuyu534/FracSim/releases) for pre-built binaries across all supported platforms.
-
+```bash
+conda install -c bioconda fracsim
+```
 
 ### Method 2: Install From PyPI
 
@@ -38,7 +40,11 @@ Check out the [Download Page](https://github.com/zhuyu534/FracSim/releases) for 
 pip install FracSim
 ```
 
-### Method 3: Install from source 
+### Method 3: Download binaries
+
+Check out the [Download Page](https://github.com/zhuyu534/FracSim/releases) for pre-built binaries across all supported platforms.
+
+### Method 4: Install from source 
 
 ```bash
 git clone https://github.com/zhuyu534/FracSim.git

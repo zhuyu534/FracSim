@@ -1,6 +1,6 @@
 # FracSim
 
-[![Conda](https://img.shields.io/conda/vn/conda-forge/FracSim)](https://anaconda.org/conda-forge/FracSim)
+[![Conda](https://img.shields.io/conda/vn/bioconda/fracsim.svg)](https://anaconda.org/bioconda/fracsim)
 [![PyPI](https://img.shields.io/pypi/v/FracSim?color=0080ff)](https://pypi.org/project/FracSim/)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

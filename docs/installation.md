@@ -8,10 +8,10 @@
 
 ### Method 1: Install via Conda (recommended)
 
-The easiest way to install FracSim is via `conda` from the `conda-forge` channel:
+The easiest way to install FracSim is via `conda` from the `bioconda` channel:
 
 ```bash
-conda install -c conda-forge FracSim
+conda install -c bioconda fracsim
 ```
 
 ### Method 2: Install From PyPI
