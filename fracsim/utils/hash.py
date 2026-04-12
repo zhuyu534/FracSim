@@ -27,7 +27,7 @@ class HashFunction:
         Returns:
             int: 哈希值
         """
-        return mmh3.hash64(kmer, self.seed)[0]
+        return mmh3.hash64(kmer, self.seed,signed=False)[0]
     
     def md5_hash(self, kmer: str) -> int:  # 备用函数
         """

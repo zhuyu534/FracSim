@@ -74,7 +74,7 @@ Examples:
         '-m','--min-similarity',
         type=float,
         default=0.00,
-        help='Minimum similarity threshold (Jaccard index, or ANI if --ani is set). Default: 0.0.'
+        help='Minimum similarity threshold. Without --ani: Jaccard index (0-1). With --ani: ANI percentage (0-100). Default: 0.0.'
     )
 
 
