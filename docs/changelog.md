@@ -9,41 +9,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- (Add new features here before the next release)
+- (Planned features for next release)
 
 ### Changed
-- (Add changes in existing functionality here)
+- (Changes in existing functionality)
 
 ### Fixed
-- (Add bug fixes here)
+- (Bug fixes)
 
-### Deprecated
-- (Add soon-to-be removed features here)
+--- 
 
-### Removed
-- (Add removed features here)
-
-### Security
-- (Add security fixes here)
-
-## [v1.0.0](https://github.com/zhuyu534/FracSim/releases/tag/v1.0.0) - 2026-03-17
+## [v1.0.2](https://github.com/zhuyu534/FracSim/releases/tag/v1.0.2) – 2026-04-13
 
 ### Added
-- **Initial pre-release of FracSim** – a lightweight tool for bacterial genome similarity estimation using FracMinHash sketching.
-- **FASTA/FASTQ input support** – accepts plain and compressed files (`.gz`, `.bz2`, `.xz`, `.zip`) with auto‑detection.
-- **FracMinHash sketching** – configurable scaled factor (`-s, --scaled`) to control sketch size.
-- **Similarity metrics** – computes Jaccard index and estimates Average Nucleotide Identity (ANI) using the Mash distance formula.
-- **Canonical k‑mers** – handles reverse complements to avoid double counting (enabled by default).
-- **Flexible output formats** – table (console), CSV, and JSON; output can be saved to file (`-o, --output`) with format auto‑detection.
-- **Multi‑threading** – parallel k‑mer extraction for long sequences (`--threads`).
-- **Cross‑platform binaries** – pre‑built executables for Linux (amd64), Windows (amd64), and macOS (arm64) via GitHub Releases.
-- **Command‑line interface** – comprehensive options documented via `--help`.
-- **Installation from PyPI** – `pip install FracSim` for users who prefer the Python package.
+- **Bioconda release**: FracSim is now available via `conda install -c bioconda fracsim`.
+- **GitHub Actions CI/CD**:
+  - Automated unit testing (`pytest`) on Python 3.8–3.14 across Linux, macOS, and Windows.
+- **Support TSV**: Add TSV output format
+- **Performance monitoring**: `-p, --performance` flag to report total time and peak memory usage.
 
 ### Changed
-- (None for this initial release)
+- Default `kmer-size` remains `16` (optimal based on benchmarking).
 
 ### Fixed
-- (None for this initial release)
+- **Critical:** Fixed signed/unsigned mismatch in MurmurHash3 that caused incorrect sampling (FracMinHash threshold not applied properly).
 
 ---
+
+

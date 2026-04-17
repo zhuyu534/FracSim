@@ -24,5 +24,5 @@ EOF
 
 ## Run Example
 ```bash
-fracsim -i ecoli_k12.fasta ecoli_o157.fasta --ani -k 31 -s 0.001 -V
+fracsim -i ecoli_k12.fasta ecoli_o157.fasta --ani -k 16 -s 0.001 -V
 ```

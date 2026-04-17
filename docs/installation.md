@@ -4,7 +4,6 @@
 
 - **Python**: 3.8 or higher
 - **Operating System**: Linux, macOS, Windows (WSL recommended)
-- **RAM**: At least 4 GB (16+ GB recommended for large datasets)
 
 ### Method 1: Install via Conda (recommended)
 
@@ -20,9 +19,9 @@ conda install -c bioconda fracsim
 pip install FracSim
 ```
 
-### Method 3: Download binaries
+### Method 3: Download binaries (no Python required)
 
-Check out the [Download Page](https://github.com/zhuyu534/FracSim/releases) for pre-built binaries across all supported platforms.
+Check out the [Releases Page](https://github.com/zhuyu534/FracSim/releases) for pre-built binaries across all supported platforms.
 
 ### Method 4: Install from source 
 
