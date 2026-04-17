@@ -3,8 +3,28 @@ name: Run Tests
 on:
   push:
     branches: [ main, master ]
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+      - 'images/**'
+      - '*.md'
+      - 'mkdocs.yml'
+      - 'site/**'
+      - 'LICENSE'
+      - 'MANIFEST.in'
+      - 'fracsim.spec'
   pull_request:
     branches: [ main, master ]
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+      - 'images/**'
+      - '*.md'
+      - 'mkdocs.yml'
+      - 'site/**'
+      - 'LICENSE'
+      - 'MANIFEST.in'
+      - 'fracsim.spec'
   workflow_dispatch:   # 允许手动触发
 
 jobs:
