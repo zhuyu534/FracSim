@@ -25,7 +25,7 @@ jobs:
             icon: 🪟
             platform_name: Windows
           - os: macos-latest
-            asset_name: fracsim-macos-arm64
+            asset_name: fracsim-macos-universal2
             icon: 🍎
             platform_name: macOS
 
@@ -41,18 +41,27 @@ jobs:
           python -m pip install --upgrade pip
           pip install pyinstaller mmh3 numpy
           
+      # 创建独立入口脚本以解决相对导入问题
+      - name: Create entry script
+        run: |
+          cat > run.py << 'EOF'
+          from fracsim.main import main
+          if __name__ == '__main__':
+              main()
+          EOF
+
       - name: Build with PyInstaller
         run: |
-          pyinstaller --onefile --name fracsim ./fracsim/main.py
+          pyinstaller --onefile --name fracsim ./run.py
           
-      - name: Rename binary for upload
+      - name: Rename binary for upload (cross-platform)
+        shell: bash
         run: |
-          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+          if [ "${{ runner.os }}" = "Windows" ]; then
             mv dist/fracsim.exe dist/${{ matrix.asset_name }}
           else
             mv dist/fracsim dist/${{ matrix.asset_name }}
           fi
-        shell: bash
           
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -75,6 +84,8 @@ jobs:
         id: body
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
+          REPO_NAME="${{ github.event.repository.name }}"
+          OWNER="${{ github.repository_owner }}"
           
           # 创建带图标的表格
           cat > release_body.md << EOF
@@ -86,7 +97,7 @@ jobs:
           |--|----------|------|
           | 🐧 | Linux | [fracsim-linux-amd64](${{ github.server_url }}/${{ github.repository }}/releases/download/$VERSION/fracsim-linux-amd64) |
           | 🪟 | Windows | [fracsim-windows-amd64.exe](${{ github.server_url }}/${{ github.repository }}/releases/download/$VERSION/fracsim-windows-amd64.exe) |
-          | 🍎 | macOS | [fracsim-macos-arm64](${{ github.server_url }}/${{ github.repository }}/releases/download/$VERSION/fracsim-macos-arm64) |
+          | 🍎 | macOS | [fracsim-macos-universal2](${{ github.server_url }}/${{ github.repository }}/releases/download/$VERSION/fracsim-macos-universal2) |
           
           ### 🔧 Quick Start
           
@@ -102,7 +113,7 @@ jobs:
           \`\`\`
           
           ### 📚 Documentation
-          Full documentation: [GitHub Pages](https://${{ github.repository_owner }}.github.io/$(echo ${{ github.repository }} | cut -d'/' -f2)/)
+          Full documentation: [GitHub Pages](https://$OWNER.github.io/$REPO_NAME/)
           
           ---
           **Full Changelog**: ${{ github.server_url }}/${{ github.repository }}/commits/$VERSION
