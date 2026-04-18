@@ -43,6 +43,7 @@ jobs:
           
       # 创建独立入口脚本以解决相对导入问题
       - name: Create entry script
+        shell: bash
         run: |
           cat > run.py << 'EOF'
           from fracsim.main import main
