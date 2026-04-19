@@ -6,7 +6,7 @@
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-00BFFF.svg)](https://www.python.org/downloads/)
 [![Platform](https://img.shields.io/badge/platform-linux%20%7C%20macos%20%7C%20windows-lightgrey?color=orange)](https://github.com/zhuyu534/FracSim)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![Downloads](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fdownload-stats-api.vercel.app%2Fapi%2Fapp&query=%24.total_downloads&label=Downloads&color=blue)
+![Downloads](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fdownload-stats-api.vercel.app%2Fapi%2Fapp&query=%24.total_downloads&label=Downloads&color=green)
 </div>
 
 **FracSim** is a **fast** and **accurate** tool for estimating **bacterial** genome similarity, based on the **FracMinHash** genome sketching algorithm. It compresses large genomes into compact hash sets to rapidly compute **Jaccard similarity** and **ANI (Average Nucleotide Identity)** between genomes.
