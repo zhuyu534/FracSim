@@ -45,8 +45,8 @@ class KmerGenerator:
                 rev_comp = self._reverse_complement(kmer)  # # 计算反向互补序列
                 kmer = min(kmer, rev_comp)  # 取正反链中字典序较小的
             
-            # 过滤包含非ACGT碱基的k-mer（如N、R、Y等）
-            if any(base not in 'ACGT' for base in kmer):
+            # 过滤包含 N 的 k‑mer（最常见模糊碱基）
+            if 'N' in kmer:
                 continue
 
             yield kmer  
