@@ -33,7 +33,7 @@ class SketchData:
     """素描数据类"""
     genome_id: str
     kmer_size: int
-    scaled: float
+    scaled: int
     seed: int
     hashes: Set[int] = field(default_factory=set)
     total_kmers: int = 0

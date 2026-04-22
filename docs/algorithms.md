@@ -6,7 +6,7 @@ FracMinHash is a variant of the MinHash technique designed for comparing dataset
 
 1. **k‑mer extraction**: The genome sequence is split into all overlapping substrings of length *k* (k‑mers).
 2. **Hashing**: Each k‑mer is hashed to a 64‑bit integer using MurmurHash3 (with a user‑supplied seed).
-3. **Sampling**: Only those hashes that are smaller than a threshold `max_hash = floor(2⁶⁴ × scaled)` are retained. This ensures that approximately a fraction `scaled` of all k‑mers are kept, independent of genome length.
+3. **Sampling**: Only those hashes that are smaller than a threshold `max_hash = floor(2⁶⁴ // scaled)` are retained. This ensures that approximately a fraction `scaled` of all k‑mers are kept, independent of genome length.
 4. **Sketch**: The set of retained hashes is the genome sketch.
 
 ## Jaccard Index

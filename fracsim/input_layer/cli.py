@@ -46,9 +46,9 @@ Examples:
     )
     parser.add_argument(
         '-s', '--scaled',
-        type=float,
-        default=0.01,
-        help='FracMinHash sampling rate. A float in the range (0,1]. Default: 0.01.'
+        type=int,
+        default=100,
+        help='FracMinHash sampling rate. Keep one k‑mer per `scaled` bases (integer >= 1). Default: 100.'
     )
     parser.add_argument(
         '--seed',
@@ -114,12 +114,12 @@ Examples:
     
     # 参数验证
     if args.kmer_size < 1 or args.kmer_size > 64:
-        parser.error("k-mer长度必须在1-64之间")
+        parser.error("The k-mer length must be between 1-64")
     
-    if args.scaled <= 0 or args.scaled > 1:
-        parser.error("采样率必须在(0,1]范围内")
+    if args.scaled < 1:
+        parser.error("scaled must be an integer >= 1")
     
     if args.min_similarity < 0 or args.min_similarity > 100:
-        parser.error("最小相似度必须在0-100之间")
+        parser.error("The minimum similarity must be between 0-100")
     
     return args

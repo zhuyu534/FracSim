@@ -28,5 +28,5 @@
 Compare two *E. coli* genomes:
 
 ```bash
-fracsim -i ecoli_k12.fasta ecoli_o157.fasta -k 21 -s 0.01 --ani
+fracsim -i ecoli_k12.fasta ecoli_o157.fasta -k 21 -s 100 --ani
 ```

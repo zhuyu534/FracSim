@@ -134,7 +134,7 @@ def _process_sequence_for_sketch(sequence: str, k: int, max_hash: int, seed: int
 class FracMinHashSketch:
     """FracMinHash素描生成器类（支持多进程并行）"""
     
-    def __init__(self, k: int, scaled: float, seed: int = 42, threads: int = 1):
+    def __init__(self, k: int, scaled: int, seed: int = 42, threads: int = 1):
         """
         初始化FracMinHash素描生成器
         
@@ -237,5 +237,5 @@ class FracMinHashSketch:
         """
         # 使用64位哈希空间
         max_64bit = 2**64 - 1
-        return int(max_64bit * self.scaled)
+        return int(max_64bit // self.scaled)
 

@@ -61,7 +61,7 @@ pip install -e .
 ### Compare two E. coli genomes:
 
 ```bash
-fracsim -i ecoli_k12.fasta ecoli_o157.fasta -k 16 -s 0.01 --ani
+fracsim -i ecoli_k12.fasta ecoli_o157.fasta -k 21 -s 100 --ani
 ```
 
 ### Example output (table format):
@@ -74,7 +74,7 @@ ecoli_k12     ecoli_o157    12456    11892    11234          0.9023     97.85
 ### For a list of genomes (one per line in genomes.txt):
 
 ```bash
-fracsim -l genomes.txt -k 16 -s 0.01 --ani -o results.csv
+fracsim -l genomes.txt -k 21 -s 100 --ani -o results.csv
 ```
 
 ## 📖 Usage & Options
@@ -91,7 +91,7 @@ FracSim -- a FracMinHash-based genome similarity estimator for bacteria
 | `-i, --input`          | Space-separated list of input genome files (FASTA/Q).                      |
 | `-l, --list`           | File containing one input file path per line.                              |
 | `-k, --kmer-size`      | k-mer length (1–64, default: 16).                                          |
-| `-s, --scaled`         | FracMinHash sampling rate (0–1, default: 0.01).                            |
+| `-s, --scaled`         | FracMinHash sampling rate (integer >= 1, default: 100).                            |
 | `--seed`               | Random seed for hashing (default: 42).                                     |
 | `-a, --ani`                | Compute ANI in addition to Jaccard index (Percentage).                                  |
 | `-t, --threads`            | Number of parallel tasks (default: 1).                    |
@@ -108,10 +108,10 @@ FracSim -- a FracMinHash-based genome similarity estimator for bacteria
 
 ```bash
 # Basic pairwise comparison with ANI, using 4 threads
-fracsim -i genome1.fna genome2.fna -k 16 -s 0.01 --ani -t 4
+fracsim -i genome1.fna genome2.fna -k 21 -s 100 --ani -t 4
 
 # Batch comparison, save as TSV
-fracsim -l genome_list.txt -k 16 -s 0.001 -o results_output/result.tsv
+fracsim -l genome_list.txt -k 21 -s 1000 -o results_output/result.tsv
 
 # Filter high‑similarity pairs only (Jaccard ≥ 0.95)
 fracsim -i A.fasta B.fasta -m 95
@@ -124,7 +124,7 @@ FracSim estimates genome similarity using the **FracMinHash** sketching algorith
 ### 1. Sketching (FracMinHash)
 - Split each genome into overlapping **k‑mers** (length `k`, default 16).
 - Hash each k‑mer with MurmurHash3 (64‑bit, unsigned).
-- Keep only hashes smaller than `max_hash = floor((2⁶⁴‑1) × scaled)`.  
+- Keep only hashes smaller than `max_hash = floor((2⁶⁴‑1) // scaled)`.  
   This retains a fixed **fraction** (`scaled`) of all k‑mers, independent of genome size.
 - The set of kept hashes is the genome **sketch**.
 

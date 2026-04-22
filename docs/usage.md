@@ -7,7 +7,7 @@
 | `-i, --input`          | Space-separated list of input genome files (FASTA/Q).                      |
 | `-l, --list`           | File containing one input file path per line.                              |
 | `-k, --kmer-size`      | k-mer length (1–64, default: 16).                                          |
-| `-s, --scaled`         | FracMinHash sampling rate (0–1, default: 0.01).                            |
+| `-s, --scaled`         | FracMinHash sampling rate (integer >= 1, default: 100).                            |
 | `--seed`               | Random seed for hashing (default: 42).                                     |
 | `-a, --ani`                | Compute ANI in addition to Jaccard index (Percentage).                                  |
 | `-t, --threads`            | Number of parallel tasks (default: 1).                    |
@@ -41,7 +41,7 @@
 | Option | Description |
 |--------|-------------|
 | `-k, --kmer-size` | k-mer length (1–64, default: 31). Longer k-mers provide higher specificity but require more memory. |
-| `-s, --scaled` | FracMinHash sampling rate (0–1, default: 0.01). Controls sketch size: lower values = smaller sketches (faster but less sensitive). |
+| `-s, --scaled` | FracMinHash sampling rate (integer >= 1, default: 100). Controls sketch size: lower values = smaller sketches (faster but less sensitive). |
 | `--seed` | Random seed for hashing (default: 42). Change to get different hash values for the same input. |
 
 ### Output Control
@@ -81,40 +81,40 @@ FracSim supports multiple output formats to suit different needs:
 
 ### Basic pairwise comparison
 ```bash
-fracsim -i genome1.fna genome2.fna -k 31 -s 0.01 --ani 
+fracsim -i genome1.fna genome2.fna -k 31 -s 100 --ani 
 ```
 
 ### Batch processing multiple files
 ```bash
 # Using space-separated list
-fracsim -i genome1.fna genome2.fna genome3.fna -k 31 -s 0.001
+fracsim -i genome1.fna genome2.fna genome3.fna -k 31 -s 1000
 # Using list file
-fracsim -l genome_list.txt -k 31 -s 0.001
+fracsim -l genome_list.txt -k 31 -s 1000
 ```
 
 ### Controlling output
 
 ##### Save results as CSV
 ```bash
-fracsim -i genome1.fna genome2.fna -k 31 -s 0.01 --ani -o results.csv
+fracsim -i genome1.fna genome2.fna -k 31 -s 100 --ani -o results.csv
 ```
 ##### Filter high-similarity pairs only
 ```bash
-fracsim -i genome1.fna genome2.fna -k 31 -s 0.01 --min-similarity 0.8
+fracsim -i genome1.fna genome2.fna -k 31 -s 100 --min-similarity 80
 ```
 ##### JSON output with verbose logging
 ```bash
-fracsim -i genome1.fna genome2.fna -k 31 -s 0.01 --format json -o results.json -V
+fracsim -i genome1.fna genome2.fna -k 31 -s 100 --format json -o results.json -V
 ```
 
 ### Performance optimization
 ##### Parallel processing of large genomes
 ```bash
-fracsim -i large_genome.fna reference_genome.fna -k 31 -s 0.01 --threads 8
+fracsim -i large_genome.fna reference_genome.fna -k 31 -s 100 --threads 8
 ```
 
 ### Working with compressed files
 ```bash
 # Auto-detects and decompresses .gz files
-fracsim -i genome1.fna.gz genome2.fna.gz -k 31 -s 0.01 --ani
+fracsim -i genome1.fna.gz genome2.fna.gz -k 31 -s 100 --ani
 ```
