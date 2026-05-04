@@ -1,0 +1,33 @@
+/* 自定义颜色变量（覆盖 Material 主题默认值） */
+:root {
+  --md-primary-fg-color: #00796b;        /* 主色：teal 700 */
+  --md-primary-fg-color--light: #48a9a6;
+  --md-primary-fg-color--dark: #004d40;
+  --md-accent-fg-color: #f57c00;         /* 强调色：orange 700 */
+  --md-accent-fg-color--light: #ffb74d;
+  --md-accent-fg-color--dark: #e65100;
+}
+
+/* 导航栏标题字体大小 */
+.md-header__title {
+  font-size: 1.2rem;
+}
+
+/* 代码块字体 */
+code {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.9em;
+}
+
+/* 表格样式优化 */
+table {
+  font-size: 0.9rem;
+  margin: 1rem 0;
+}
+
+/* 首页 Logo 放大（可选，用于首页内容区） */
+.md-typeset img[alt="FracSim Logo"] {
+  max-width: 200px;
+  margin: 0 auto;
+  display: block;
+}
