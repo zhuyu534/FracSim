@@ -49,7 +49,7 @@
 | Option | Description |
 |--------|-------------|
 | `-a, --ani` | Compute ANI (Average Nucleotide Identity) in addition to Jaccard index. Adds ANI column to output. |
-| `-f, --format` | Output format: `table`, `csv`, `json`, `tsv` (default: `table`). Console always displays formatted results. |
+| `-f, --format` | Output format: `table`, `csv`, `json` (default: `table`). Console always displays formatted results. |
 | `-o, --output` | Output file path. Format is auto-detected from extension (`.csv`, `.json`, `.txt`, `.tsv`). |
 | `-m, --min-similarity` | Filter results: only output pairs with similarity ≥ this value (default: 0.0). Useful for focusing on high-similarity genomes. |
 

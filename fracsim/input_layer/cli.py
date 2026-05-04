@@ -18,8 +18,8 @@ def parse_arguments():
         formatter_class=argparse.RawDescriptionHelpFormatter,  #控制帮助信息的格式
         epilog="""
 Examples:
-  %(prog)s -i genome1.fasta genome2.fasta -k 21 -s 0.01 
-  %(prog)s -l genomes.txt -k 21 -s 0.001 -o output_dir/results.csv
+  %(prog)s -i genome1.fasta genome2.fasta -k 21 -s 100 
+  %(prog)s -l genomes.txt -k 21 -s 100 -o output_dir/results.csv
   %(prog)s -i genome1.fastq.gz genome2.fastq.gz --threads 4 --ani -V
         """
     )

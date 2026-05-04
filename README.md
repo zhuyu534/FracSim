@@ -95,7 +95,7 @@ FracSim -- a FracMinHash-based genome similarity estimator for bacteria
 | `--seed`               | Random seed for hashing (default: 42).                                     |
 | `-a, --ani`                | Compute ANI in addition to Jaccard index (Percentage).                                  |
 | `-t, --threads`            | Number of parallel tasks (default: 1).                    |
-| `-f, --format`             | Output format: `table`, `csv`, `json`, `tsv` (default: `table`).                  |
+| `-f, --format`             | Output format: `table`, `csv`, `json` (default: `table`).                  |
 | `-o, --output`         | Output file path.                                        |
 | `-m, --min-similarity`     | Minimum similarity threshold (Jaccard index, or ANI if --ani is set),Only output pairs with similarity ≥ this value (default: 0.0).          |
 | `-p, --performance`    | Show total time and peak memory usage.   |

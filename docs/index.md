@@ -18,7 +18,7 @@
 - **Fully self‑contained**: No dependency on BioPython, k‑mer counting libraries, or heavy bioinformatics frameworks.
 - **Flexible input**: Supports FASTA/FASTQ (plain or gzip/bzip2/xz/zip compressed), single or multiple files, and file lists.
 - **Easy to use**: Clean command‑line interface with multi‑processing support and progress indicators.
-- **Multiple output formats**: Table, CSV, TSV, JSON; can be saved to file.
+- **Multiple output formats**: CSV, TSV, JSON; can be saved to file.
 - **Open source**: MIT licensed – contributions and usage are welcome.hosted on [GitHub](https://github.com/zhuyu534/FracSim).
 
 ---
